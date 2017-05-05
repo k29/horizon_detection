@@ -3,15 +3,13 @@ import mpl_toolkits.mplot3d.axes3d as p3
 import matplotlib.pyplot as plt 
 from PIL import Image
 import cv2
+import sys
 
 def plotPixelData(old_path, scale):
 	#opening and resizing an image in PIL
 	img_file = Image.open(old_path)
 	[xSize, ySize] = img_file.size
 	img_file = img_file.resize((int(xSize/scale),int(ySize/scale)), Image.ANTIALIAS)
-	my_new_path = "plot_"+old_path
-	img_file.save(my_new_path, optimize=True, quality = 95)
-	img_file = Image.open(my_new_path)
 	img = img_file.load()
 
 	#size of the new downsampled image
@@ -49,9 +47,7 @@ def detectHorizon(cvImg, xSize, ySize):
 	#resolution can be changed by changing this value
 	res = 100.0
 	slope = np.linspace(-1,1,res)
-	# print slope
 	inter = np.linspace(0,ySize,res)
-	# print inter
 	maximum = []
 	J_max = 0
 
@@ -77,22 +73,15 @@ def detectHorizon(cvImg, xSize, ySize):
 				co_s = np.cov(sky)
 				co_g = np.cov(gnd)
 				co_sD = np.linalg.det(co_s)
-				# print "co__sD", co_sD
 				co_gD = np.linalg.det(co_g)
-				# print "co__gD", co_gD
 				eig_s, _ = np.linalg.eig(co_s)
-				# print "eig_s", eig_s
 				eig_g, _ = np.linalg.eig(co_g)
-				# print "eig_g", eig_g
 
 				J = 1/(co_sD + co_gD + (eig_s[0]+eig_s[1]+eig_s[2])**2 + (eig_g[0]+eig_g[1]+eig_g[2])**2)
-				# J = 1/(co_sD + co_gD)
-				# print "J: ", J
 				if J > J_max:
 					J_max = J
 					maximum = [slope[m], inter[b]]
 					print maximum
-					# print maximum[0], maximum[1]
 			except Exception:
 				pass
 
@@ -111,19 +100,17 @@ def plot(cvImg, horizon, path):
 	b = horizon[1]
 	y2 = int(m*(xSize-1)+b)
 	cv2.line(cvImg, (0,int(b)), (xSize-1, y2), (0,0,255), 2)
-	save_path = "myHorizon_"+path
-	cv2.imwrite(save_path, cvImg)
 	display("horizon", cvImg)
 	
-
+filename = sys.argv[1]
+filename = "sample images/" + filename
 #just some constants
-# old_path = "image9.png"
 old_path = []
-# for i in range(10, 34):
-# 	k = "image"+`i`+".png"
+# for i in range(1, 34):
+# 	k = "sample images/image"+`i`+".png"
 # 	print k
 # 	old_path.append(k)
-old.path.append("images/image34.png")
+old_path.append(filename)
 
 scale = 10.0
 
@@ -134,14 +121,13 @@ for path in old_path:
 	cvImg_original = cv2.imread(path)
 	ySize = cvImg_original.shape[0]
 	xSize = cvImg_original.shape[1]
-	print xSize, ySize
 	cvImg = cv2.resize(cvImg_original, (0,0), fx=1/scale, fy=1/scale) 
-	new_path = "new_"+path
-	cv2.imwrite(new_path, cvImg)
 	ySize = cvImg.shape[0]
 	xSize = cvImg.shape[1]
-	print xSize, ySize
-	cvImg = cv2.GaussianBlur(cvImg,(5,5),0)
+	# cvImg = cv2.GaussianBlur(cvImg,(5,5),0)
+
+	# plot pixel data in RGB space
+	# plotPixelData(path, 10)
 
 	horizon = []
 	horizon = detectHorizon(cvImg, xSize, ySize)
@@ -151,26 +137,5 @@ for path in old_path:
 
 
 
-# #opening the new image in CV
-# cvImg_original = cv2.imread(old_path)
-# ySize = cvImg_original.shape[0]
-# xSize = cvImg_original.shape[1]
-# print xSize, ySize
-# cvImg = cv2.resize(cvImg_original, (0,0), fx=1/scale, fy=1/scale) 
-# cv2.imwrite(new_path, cvImg)
-# ySize = cvImg.shape[0]
-# xSize = cvImg.shape[1]
-# print xSize, ySize
-
-# #plot pixel data
-# # plotPixelData(old_path, scale)
-
-# #detect horizon
-# horizon = []
-# horizon = detectHorizon(cvImg, xSize, ySize)
-
-# #plot the line with the slope and intercept on the original image
-# horizon[1] *= scale
-# plot(cvImg_original, horizon, old_path)
 
 
