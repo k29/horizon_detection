@@ -18,8 +18,25 @@ or rather maximize the following function:
 
 where,
 
-![](assets/sky.png)
-
 ![](assets/ground.png)
 
-The above function needs some adjustments in case the covariance matrix is singular, but this function performs pretty well as can be seen in the images below. The code for the implementation is linked below.
+![](assets/sky.png)
+
+The above function needs some adjustments in case the covariance matrix is singular, but this function performs pretty well as can be seen in the images below.
+
+![](results/myHorizon_image5.png)
+![](results/myHorizon_image9.png)
+![](results/myHorizon_image14.png)
+![](results/myHorizon_image19.png)
+![](results/myHorizon_image20.png)
+![](results/myHorizon_image25.png)
+
+However in some images where the separation in RGB space between sky and ground is not so distinct or there is some color variation in either sky or ground (too bright sun in one quarter), one can see distorted horizon line. Some images where this doesn't work as well are below.
+
+![](results/myHorizon_image7.png)
+![](results/myHorizon_image22.png)
+![](results/myHorizon_image31.png)
+
+
+References:
+* Vision-Guided Flight Stability and Control for Micro Air Vehicles, Scott M. Ettinger
